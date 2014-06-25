@@ -1,0 +1,503 @@
+April 17, 2005
+* bunch of crap not listed
++ node and leaf bounding box coords swizzled properly
++ all eight points of bounding box are calculated for leaves (and nodes)
++ double version of the DotProduct and VectorPrint
+  (bounding boxes use doubles, because glClipPlane uses doubles, argh)
++ frustum check on visible leafs -- definite speed increase.
+! draw_silhouette = 1 results in no anomalies for shadow mapping!
+  doesn't quite look right though... 
+
+--- revision 52
+
++ added camera.cc and camera.h
+
+--- revision 53
+
++ worklog added to repository
+
+-- revision 54
+
++ todo list added to repository
+
+-- revision 55
+
++ front and back caps
++ infinite view frustum
++ normals are interpolated for bezier patches
++ draw_leafs; draw each leaf a different color
++ depth fail method for shadow volumes
+  # actually works... 8-P
+
+-- revision 56
+
++ runtime face structure
+  + face.h and face.cc
+  # stuff taken out of bsp to accommadate this
+
+-- revision 57
+
++ redundant edges from a face's triangulation are removed when 
+  considering shadow volumes
+  # good speed boost
+
+-- revision 58
+
++ shad.h -- oops
+
+-- revision 59
+
++ re-did the silhouette and shadow volume calculation code
+  + edge face-edge now stores the other faces on this edge
+  + edges can be dropped from shadow volumes if other faces
+    are visible and also front-facing
+  # didn't improve performance because quake3 has overlapping
+    faces... if we can get rid of this (or at least check for
+    them) then these optimizations should work.
+
+-- revision 60
+
+- translucent faces are no longer drawn solid -- not drawn at all
++ meshes are now have shadow volumes
+  # not optimized, however.
+
+-- revision 61
+
++ visibility information stored in the camera struct
++ light structure (light.cc and light.h created)
+  # still needs to be generalized more
++ hack to reduce visual artifacts when using shadow mapping
+
+-- revision 62
+
++ opengl vendor, renderer, version, and extension info is printed to console
++ console now wordwraps
++ can scroll console text up and down
+  # put some error checking in here!
+
+-- revision 63
+
+* lights no longer store shadow volume information
+  # must be re-calculated each frame
++ dynamic_lights cvar to turn lighting off and on
++ rendering passes can now support multiple lights
+  * additive blending so later lights don't overwrite
+  # shadow mapping is not implemented fully
+
+-- revision 64
+
+* better stats for shadow volumes:
+  + draw_num_volume_caps    
+  + draw_num_volume_sides
+* better stats for frame rates:
+  + record times for each light
+  + print out relative percentages every second on an example frame
+  # seems like the stencil drawing phase is the bottleneck 
+- removed the texture loading test code
++ support for opengl spotlights
+  # need per-pixel lighting for this to look good
+
+-- revision 65
+
+# played around with per-pixel lighting:
+  # too slow!
+  # must implement all the other crap by hand
+  # so... not now
+# played around with getting a pbuffer
+  # fucking glX... argh!
+  # so... not now
+- no more opengl ambient lighting (was on by default)
++ rudimentary console commands
+  + can turn lights on/off; change position; change attenuation factors
+* multiple lights with shadow mapping
+  # allocates 8 shadow buffers -- this means at most 8 lights...!
+  # should use a single pbuffer instead 
+* a light's texture gen matrix is set properly now
+* cleanup in shadow mapping code
+  
+-- revision 66
+
+* glPolygonOffset() seems to work now!
+  * positive offset into depth buffer
+  * negative offset when drawing
+  # each successive light needs more offseting so
+    the contributions of each light don't artifact 
+
+-- revision 67
+
+* each light's viewing transform is calculated and stored only once
++ drawing stats for each visiblie light are printed in hard_mapping mode
++ we skip a light if its frustum is not in the view frustum
++ draw_light_frustum cvar controls whether we draw a wireframe frustum
+  for each light.
+
+-- revision 68
+
++ mesh_t type: generalizes face meshes, patches, and md3 models
+* patches and meshes are now stored as mesh_t's.
++ ...get shadow volumes on patches for free now. :) 
+
+-- revision 69
+
+* player fov is now 75; seems more natural
+* mouse look is not inverted anymore (why was it?)
+* tweaked mouse sensitivity
+
+-- revision 70
+
+* edges are computed on meshes 
+* shadow volumes are extrude on meshes using the edge information
+
+================
+April 23rd, 2005
+================
+
+-- revision 71
+
+* bounding boxes are constructed for faces properly now
+* compare bbox of each face to frustum during vis test
+* stencil volumes: each light gets a bbox frustum to reduce 
+  the number of faces which extrude volumes
+* stats on shadow volumes for each light and total
+* fixed bug in light stats
+
+-- revision 72
+
+* visible faces are determined only once for player, lights
++ times for updating world and drawing HUD are displayed
++ info_viewpoint cvar: toggles display of viewpoint coords, angles, etc.
+* text drawing with glut is extremely slow so quake3 font is used for text now
+* console background switched to solid gray
+* tweaked stat output
+
+-- revision 73
+
+* visible faces are computed only once; correctly now :-)
+* lights that share no visible faces with player are culled
+
+-- revision 74
+
+* cvar 'edge_cull', controls whether edges on exactly two
+  frontfacing polygons extrude side volumes or not.
+  because of overlapping polygons, could cause visual anomalies.
+* elination of some old face code
+* moved silhouette stuff into face.cc
+* code refactoring
+
+================
+April 24th, 2005
+================
+
+-- revision 75
+
++ md3 support
+  + load the three parts of the 'sarge' model and draw with a skin
+  + very simple animiation framework
+* meshes now have two sets of vertices: one static, one translated
+* currently the three parts of the model are not properly aligned
+
+-- revision 76
+
+* better animation support
+* meshes can now be rotated/translated
+* misc code changes
+
+-- revision 77
+
++ md3.cc and md3.h -- oops
+
+-- revision 78
+
++ started report
+
+================
+April 25th, 2005
+================
+
+-- revision 79
+
+* more work on report
+
+-- revision 80
+
+* light_full and light_half lightmaps
+* md3 models are drawn with glDrawElements() with half_lightmaps
+* faces now have ogl texture / lightmap names directly in their structure
+* md3s drawn in both shadowed modes
+* shadow volumes are calculated for md3s -- basically for free!
+# looks pretty cool!
+
+-- revision 81
+
+* more work on report
+
+-- revision 82
+
++ mapping_cull_front (0|1) cvar to switch between culling methods
+* more work on report
+
+-- revision 83
+
++ ability to add lights to the world
++ mapping_polygon_offset (0|1) cvar
+* report finished
+
+-- revision 84
+
+* small cleanups
+
+================
+April 27th, 2005
+================
+
+-- revision 85
+
++ texture structure that groups all textures
+  # except shadow maps!
+* runtime surface structure
+  * has pointer to its texture 
+* faces now have pointers to runtime surface structure
+  * get their textures from the surface
+  * have pointer to lightmap texture
+* md3 skin is now a texture
+* tex_stats console command prints output of glAreTexturesResident
+  # weird results -- 11 of 119 not resident?!?!
++ console commands tex_min & tex_mag to switch between different
+  filtering modes
+
+-- revision 86
+
+* tried using glAreTexturesResident on different TUs.. no difference..?
+* edge on more than two faces in a mesh is just a warning now.
+
+================
+April 28th, 2005
+================
+
+-- revision 87
+
+* why were we using alpha tests during shadow mapping?
+  removed the tests so that textures an can 4 components
+* removed all mention of TU2, setting up for better shader handling
+# what would be the best way to implement shaders, anyway?
+  do them in each in one pass, messing with texture environments?
+
+-- revision 88
+ 
+* doh, moving stuff to TU7 messed a few things up.
+* transparent faces are now drawn in their own pass
+* better texture stuff:
+  * textures are only loaded once now (wow!)
+* shader layers are parsed (very rudimentary!)
+* restructured everything so that the shader does the drawing
+  and loading of textures
+* support for 'animmap' in shader layers
+
+================
+April 30th, 2005
+================
+
+-- revision 89
+
+* shadow volume front and back caps are stored in a large triangle list
+* drawing volumes is just two calls to glDrawElements now
+
+-- revision 90
+
+* EXT_compiled_vertex_array and EXT_stencil_wrap are used if supported to
+  try to speed up the stencil pass.  Not noticable performance increase
+  on my machine... :-/
+* some cleanup in light.cc
+* some profiling; BoxInFrustum and CalculateShadowVolumes are the main
+  workhorses
+# these "optimizations" may have slowed it down instead!!
+
+-- revision 91
+
+* many code cleanups, mainly to do with console output
+* console font is loaded with LoadTexture now
+* console background shader is loaded
+* console is drawn with background (note with the shader though)
+* scrolling console (yay!)
+
+-- revision 92
+
++ console command framework and some console commands
+* cleanup of console code
++ texture.cc and texture.h; texture stuff moved out of bsp.cc
+
+-- revision 93
+
++ simple sky box; files sky.h and sky.cc
+
+=============
+May 2nd, 2005
+=============
+
+-- revision 94 --
++ render.cc, render.h
+* only bind textures if different from current texture
+
+-- revision 95 --
+* blendfuncs are parsed for each shader layer
+
+=============
+May 3rd, 2005
+=============
+
+-- revision 96 --
+* proper shader rendering
+  # supports rgbgen wave, nothing else
+* patches are not drawn... need to convert each
+  patch into a single mesh. 
+
+-- revision 97 --
+* patches are drawn
+* vertex, normal, and tc lists are compiled for each face
+  for rendering with glDrawElements
+* numverts is now set properly in each mesh now
+
+=============
+May 4th, 2005
+=============
+
+-- revision 98 --
+* console looks fine now
++ support for some tcmods: scale, transform and scroll.
+* animmaps now work at proper speed:
+  stupid shader spec saying freq instead of fps
+* fixed bug where animmaps could generate a negative frame
+
+-- revision 99 --
+* glLockArraysExt() is used; slight speed increase
+* translucent surfaces are sorted by distance before drawn
++ draw_translucent (0|1) cvar
+* use the shader to determine if a face is translucent or not
+
+=============
+May 5th, 2005
+=============
+
+-- revision 100 --
++ tex_gamma cvar
+* gamma is computed quickly now
+# gamma doesn't look right for additively blended surfaces
++ tex_list ccmd to list all texture filenames in use
+
+-- revision 101 --
+* shader 'cull' command implemented
+* shader 'depthwrite' command implemented
+* shader 'depthfunc' command implemented
+
+-- revision 102 --
+* depth func stuff taken out of DrawQuake3
+
+=============
+May 6th, 2005
+=============
+
+-- revision 103 --
+* environment mapping (I think it's correct)
+
+-- revision 104 --
+* Cvar* functions renamed to cvar_*
+* cleanup in render.c
+* drawing functions in bsp.cc moved to render.cc
++ vis_force_all cvar
+* all world faces that aren't patches now get
+  a mesh; this eases rendering later on.
+# turn patches into a single mesh?
+
+-- revision 105 --
+* brushes and brushsides are now loaded
+* world models get proper bbox
+* world models are checked for visibility in DetermineVisible
+  * faces are marked visible if bbox is in frustum
+  * faces are marked not visible otherwise (sometimes there
+    are degenerate leafs that reference model faces)
+* no more DrawModel; everything done in DrawWorld
+
+=============
+May 7th, 2005
+=============
+
+-- revision 106 -- 
+* tcmod 'rotate' implemented
+* tcmod 'turb' implemented
+* alphafunc implemented
+
+-- revision 107 -- 
+* runtime surfs are now allocated
+* lightmaps are allocated (to ease texture freeing later on)
+* textures are allocated in a dynamic list
+  * each can be marked as permanent (not freed with a level)
+  * list shrinks and grows as needed
+# some texture names that appear in bsp or shader files have
+  different capitalization than their filenames;
+* bsp files can be loaded from the console using the 'map' command
+
+=============
+May 9th, 2005
+=============
+
+-- revision 108 --
+* color array is used to set vertex colors
+  * not actually implemented, however
+* deformVertexes info is parsed into shaders
+  * again, deformations are not implemented
+
+==============
+May 11th, 2005
+==============
+-- revision 109 --
+* rearranged drawing order
+* separated drawing fps and other info
+* drawing routines now use render.cc's mode setting functions
+
+==============
+May 12th, 2005
+==============
+-- revision 110 --
+* glClientStates are enabled/disabled in Pre/PostFrame 
+* console drawn with shader
+
+
+January 25, 2006
+-- revision 124 --
+* managed to port this to cygwin!
+  * strcasecmp issues
+  * some issues with an unknown __imp___iob token when linking. 
+  * jpeg stuff is included by hand. Can't use <jpeg.h>
+  * stuff in ctype.h seems to give problems. Got around this
+    by writing my own isspace() routine.
+  * timer issues
+  * apparently no 'scandir' function... 
+
+January 27, 2006
+-- revision 125 --
++ shell.cc and shell.h
+  * refactored the shell stuff from console into shell.cc
+  - no more wordwrap; do this in the console not in the shell
+  * buffer overflows should no longer occur in console.cc
+
+-- revision 126 --
+* conprintf could wrongly abort early
+* InitGLEW now reports messages to shell instead of stdout
+* console does not attempt to display '\n' and '\r'
+
+-- revision 127 --
+* about info added to initialization routines
+* intialization slightly re-ordered
+
+January 28, 2006
+-- revision 128 --
+* shell history is capped at top and bottom
+* cvars and ccmds are now stored in a map for quick searching
++ autocomplete functionality
+* arguments weren't being parsed properly:
+  spaces at the end caused a buffer overflow
+
+-- revision 128 -- 
+* more code re-arranging in main.cc
+* removed a line of printf debugging code in shell.cc
+- no longer build shadow maps by default

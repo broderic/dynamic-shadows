@@ -1,0 +1,48 @@
+Misc. Stuff
+=====================
++ handle cygwin related issues
+  * strcasecmp issues
+  * some issues with an unknown __imp___iob token when linking. 
+    * appears to be from using fprintf?
+  * jpeg stuff is included by hand. Can't use <jpeg.h>
+  * stuff in ctype.h seems to give problems. Got around this
+    by writing my own isspace() routine.
+  * timer issues
+  * apparently no 'scandir' function... 
+
++ handle command-line arguments by passing to console 
++ add cvars for default viewport dimensions, fov, nearplane, farplane, etc.
++ vid restart from console
+
++ read .pak files instead of needing them to be unzipped
+
+Drawing stuff
+======================
+* draw_wireframe interferes with console... >:@
++ draw md3 models with shader
++ anisotropic filtering
++ hardware gamma correction
+* shader-driven sky
++ use multitexturing when drawing shaders
+* turn patches into a single mesh
++ deformVertexes
++ alphaGen
+# some texture names that appear in bsp or shader files have
+  different capitalization than their filenames;
+
++ cull faces not visible to world
+  # gives smaller silhouette
+  # not a serious issue
+
+
+Shadow Volumes:
+=====================
+* MAKE IT WORK WITH SHADERS
++ spot lights for shadow volumes
+* speed up!
+
+Shadow Mapping:
+=====================
+* MAKE IT WORK WITH SHADERS!
+* pbuffers so we use less memory
++ PCF?
